@@ -293,8 +293,23 @@ programacion:[
 ]
 };
 
+// Mezcla aleatoriamente las opciones de cada pregunta y actualiza el índice de la respuesta correcta.
+function shuffleQuestionOptions(question){
+  const correctOption = question.options[question.answer];
+  const options = [...question.options];
+
+  for(let i = options.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [options[i], options[j]] = [options[j], options[i]];
+  }
+
+  question.options = options;
+  question.answer = options.indexOf(correctOption);
+  return question;
+}
+
 for (const topic of topics){
-  topic.questions = (seed[topic.id] || []).map(x=>({q:x[0],options:x[1],answer:x[2],explanation:x[3]}));
+  topic.questions = (seed[topic.id] || []).map(x=>shuffleQuestionOptions({q:x[0],options:x[1],answer:x[2],explanation:x[3]}));
   // Validación: cada sección debe contener exactamente 20 preguntas.
   if(topic.questions.length !== 20) console.warn(topic.id + " no tiene 20 preguntas");
 }
